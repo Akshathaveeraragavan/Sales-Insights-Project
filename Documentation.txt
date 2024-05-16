@@ -1,0 +1,102 @@
+  SALES INSIGHTS DATA ANALYSIS POWER BI PROJECT BY CODEBASICS 
+ MAIN STEPS INCLUDED : 
+1. discuss the problem statement of how a computer manufacturer face issues in their sales { ames grid }
+2. data discovery
+3. data cleaning 
+4. data merging 
+5. dashboarding 
+6. revenue , sales by years 
+7. give the dashboard to stakeholders { sales directors , marketing head } and they give data analyst the feedback
+
+STEP 1 - PROBLEM STATEMENT 
+
+ATLIQ hardware is a company that supplies hardware equipments across India .they have the head office at Delhi and gujarat and many branches across India.
+Bhavan Patel - sales director wants to get insights on the sales and know which area should be focused more , shd we give some offers or not ? 
+just verbal insights on a data cannot be clear & concise
+picture speaks more than words 
+so creating a visual with all data put into can be better for patel to observe the sales rate 
+
+STEP 2 - DATA DISCOVERY USING AIMS GRID 
+
+AIMS GRID - project management tool and it has 4 componenets 
+1. PURPOSE - what is our pain point ? what to do exactly?
+2. STACKHOLDERS - who are people involved ? data analyst team , IT team , marketing team and the sales director . Some companies will not have these teams in house so they will outsource their projects to some other company like accenture , TCS , infosys , etc. But for this project , we assume these are already in-house
+3. AIMS GRID - whats the end result and insights ? here , result is a power bi dashboard
+4. SUCCESS CRITERIA - reduce cost of manual work and acheive desired results after using this dashboard for say 3 months
+
+IT TEAM - FALCONS  { has all MYSQL database } 
+DATA ENGINEERS TEAM - DATA MINERS 
+DATA ANALYST TEAM - DATA MASTERS { reach out to miners team to access the db from the warehouse  }
+
+PROCESS OF DATA  { JOB of DATA MINERS }
+1. take data from MYSQL / OLTP [ online transaction processing system ] 
+2. perform ETL [ extract transform load ] using tools like apache ni fi , python and pandas
+3. store in data warehouse like tera data , snowflake 
+
+Now y all these steps and y not directly perform queries on MYSQL ? 
+there are 2 problems : i) may cause db to slow down so main stream affected ii) format of data in OLTP may not be the desired format
+
+FOR THIS PROJECT , TO MAKE IT SIMPLE , NOT BUILDING ANY DATA WAREHOUSE AND INSTEAD PULL DATA DIRECTLY FROM MYSQL DB . SO ASSUME data analysts get the data directly from the IT team 
+
+
+STEP 3 - DATA ANALYSIS USING MYSQL 
+
+1 . install MYSQL workbench  which helps to view tables and run queries 
+2. create a new connection by pressing the + and name as dev_sales insights and press OK
+3. check the status of the connection by clicking to check status under administration
+4. download the sql db given in the github by clicking on to clone and download zip
+
+IMPORT DATA INTO SQL SERVER 
+1. click on server and data import 
+2. choose the file location and choose the file 
+3. get imported and runs without an error 
+4. refresh and see sales db created 
+
+DB INFO 
+there are totally 5 tables 
+1. CUSTOMERS - cust infor like code , name nd type
+2. TRANSACTIONS - info like sales qty and amount  , pdt code , cust code and market code  , currency [ some are INR and some in USD ]
+3. PRODUCTS - pdt code and type 
+4. MARKETS - code , name and zone 
+5. DATE - date , year , month and date as yy__mm
+
+ANALYSIS USING QUERIES 
+1. count of database { count(*) } - 150000 approx
+2. count of customers { count(*) } - 38
+3. count of transactions at chennai alone { marketcode is 001 } - 1035
+4. count of transactions with currency as USD  - 2 
+5. INNER join on date of date table and transactions table { refer word } and then fetch transactions at the year 2020
+6. sum of sales at 2020 [  no USD at 2020 , so no worries ] - 152 Million
+7. sum of sales at 2019 - 336 M [ so revenue is declining ]
+8. sum of sales at chennai during 2020 { refer word } - 2.4M
+9. distinct product list sold at chennai { refer word }
+
+
+STEP 4 - PULL DATA INTO POWER BI AND DO DATA CLEANING 
+{ this is also called ETL }
+ 
+Extract data from MYSQL database and connect to power bi 
+Check for relationships between the tables { same clmn names form a relationships }
+manually connect some relationships  
+These are called "star schema"
+
+STAR SCHEMA - concept in the world of data warehousing and analytics which has two types of tables : fact tables and dimension tables 
+fact table - actual transaction / actual events happening in the business
+dim table - cust details , pdt , market and so on
+dim tables connect with fact tables to form relationships in shape of a star 
+In our star schema , transactions is the fact table and other are dim tables 
+
+DATA CLEANING / TRANSFORMATION  { done at power query editor }
+
+Go to transform data and open power query editor 
+1. markets - Atliq does business only in india , but our markets table has values of new york and paris . so remove that . so go to zone and choose blank and click ok to remove empty values 
+2. transactions -   remove sales amt that is 0 nd -1 
+3. transactions - convert USD to INR  by applying an if condition  { 1 USD = 75 INR  as of this project ,but in reality there will be a currency conversion table and we pull data from that and multiply }
+4. transactions - remove duplicate records { INR , INR\r , USD , USD\r}  so INR\r and USD\r are the real records as they are more in number  . so remove the other 2 currencies 
+
+STEP 5 - BUILDING DASHBOARD
+
+CREATING BASE MEASURE TABLE AND FOLLOWING MEASURES 
+1. Revenue - sum of sales amount
+2. Sales Qty - sum of sales quantity
+
