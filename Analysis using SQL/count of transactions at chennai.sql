@@ -1,0 +1,1 @@
+SELECT COUNT(*) FROM sales.transactions where market_code="Mark001";
